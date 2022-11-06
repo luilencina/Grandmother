@@ -1,36 +1,39 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.CookieStore;
 import java.util.Scanner;
 
 public class Way{
 
-    // private static Coordinates coordinates;
-    private static Coordinates[] coList;
+    private static Chromosome[] population;
+    private static Chromosome[] chromosome;
 
-    public Way(Coordinates[] assumption) throws IOException {
-        // this.coordinates = new Coordinates(0, 0, null);
-        this.coList = new Coordinates[0];
+    public Way(Chromosome[] chromosome, Chromosome[] population) throws IOException {
+        this.population = new Chromosome[0];
+        this.chromosome = new Chromosome[0];
     }
 
-    public Coordinates[] start() throws IOException {
+    private int cont = 0;
+
+    public Chromosome[] start() throws IOException {
         readerFile();
-        assumpCoordinates();
+        chromossome(cont);
         return null;
     }
 
-    public static Coordinates[] readerFile() {
+    public static Chromosome[] readerFile() {
         try(BufferedReader file = new BufferedReader(new FileReader("../places/data.txt"))){ 
                 String l =  file.readLine();
                 int length = Integer.parseInt(l);
-                coList = new Coordinates[length];
+                chromosome = new Chromosome[length];
                 try (Scanner in = new Scanner(file)) {
                     int i = 0;
                     in.nextLine();
                     while (in.hasNextLine()) {
                         String line = in.nextLine();
                         String[] split = line.trim().split("\\s+");
-                        coList[i] = new Coordinates(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
+                        chromosome[i] = new Chromosome(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
                                 split[2], 0);
                         i++;
                     }
@@ -38,20 +41,29 @@ public class Way{
         } catch(IOException e){
             System.out.println("Arquivo não encontrado, por favor tente novamente!");
         }
-        return coList;
+        return chromosome;
     }
 
-    public void assumpCoordinates() throws IOException {
-        Coordinates[] a = new Coordinates[5];
-        Coordinates[] b = new Coordinates[5];
+    public void chromossome(int x) throws IOException {
+        Chromosome[] a = new Chromosome[5]; // chromosome A
+        // Chromosome[] b = new Chromosome[6]; // chromosome B
+        population = new Chromosome[200];
 
-        for (int i = 0; i < a.length; i++) {
-            a[i] = coList[i];
-            b[i] = coList[i + b.length];
+        for (int i = x; i < 5; i++) {
+
+            for (int j = x; j < 5; j++) {
+                a[j] = chromosome[j];
+                // b[i] = chromosome[i + b.length];
+            }
+
+            population[i] = a[i];
+            x += 5;
         }
+        printer(population);
+
     }
 
-    public void croosover(Coordinates[] assumption) {
+    public void createPopulation(Chromosome[] a) {
 
     }
 
@@ -59,7 +71,7 @@ public class Way{
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
-    public static void printer(Coordinates[] way) throws IOException {
+    public static void printer(Chromosome[] way) throws IOException {
         for (int i = 0; i < way.length; i++) {
             System.out.print("x: " + way[i].x + " " + "y: " + way[i].y + " " + "City: " + way[i].city);
             System.out.println("  ");
