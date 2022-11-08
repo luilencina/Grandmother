@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.CookieStore;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Genetic{
@@ -15,30 +16,9 @@ public class Genetic{
         this.cities = new City[0];
     }
 
-    //le o arquivo 
-    public static City[] readerFile() {
-        try(BufferedReader file = new BufferedReader(new FileReader("../places/data.txt"))){ 
-                String l =  file.readLine();
-                int length = Integer.parseInt(l);
-                cities = new City[length];
-                try (Scanner in = new Scanner(file)) {
-                    int i = 0;
-                    while (in.hasNextLine()) {
-                        String line = in.nextLine();
-                        String[] split = line.trim().split("\\s+");
-                        cities[i] = new City(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
-                                split[2], i);
-                        i++;
-                    }
-            }
-        } catch(IOException e){
-            System.out.println("Arquivo não encontrado, por favor tente novamente!");
-        }
-        return cities;
-    }
-
     public City[] start() throws IOException {
-        readerFile();
+        ReaderFile reader = new ReaderFile(cities);
+        cities = reader.readerFile();
         population();
         return null;
     }
@@ -47,18 +27,18 @@ public class Genetic{
     public void population() throws IOException {
         population = new Chromossome[cities.length];
         
-        for (int i = 0; i < cities.length; i++) {
+        for (int i = 0; i < cities.length; i++) 
             population[i] = chromossome();
-        }
+
+        tournament();
     }
 
     //cria o cromossomo
     public Chromossome chromossome() throws IOException {
         int[] ch = new int[cities.length];
         
-        for (int i = 0; i < cities.length; i++) {
+        for (int i = 0; i < cities.length; i++) 
             ch[i] = i;
-        }
         
         Chromossome chromossome = new Chromossome(ch, 0);
         calcChromossome(chromossome);
@@ -79,9 +59,20 @@ public class Genetic{
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
-    public void mutation(){
+    //Torneio
+    //qual tem a menor distancia?
+    public static Chromossome tournament(){
+        Chromossome better = new Chromossome(null, 9999999.999999999);
+        for (int i = 0; i < population.length - 1; i++) {
+            if(population[i].distance < better.distance) better = population[i];
+        }
+
+        System.out.println("Better: " + better + " com distancia total: " + better.distance);
+        return better;
+    }
+
+    public static void croosover(){
 
     }
 
-    
 }
