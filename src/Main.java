@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        Way x = new Way(null, null);
+        Genetic x = new Genetic(null, null);
         x.start();
     }
 
