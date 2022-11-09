@@ -24,16 +24,8 @@ public class Genetic {
         for (int i = 0; i < tam; i++) {
             ch = mutation(better);
             better = lessDistance(ch) ? ch : better;
-            // if(better.distance < ch.distance) System.out.println(better.distance);
         }
-
-        System.out.println(" ");
-        System.out.println("Melhor caminho encontrado para o tamanho " + tam + ": ");
-        mapsCities(better);
-        System.out.println(" ");
-        System.out.println("A distância de ida e volta:");
-        System.out.println(better.distance);
-        System.out.println(" ");
+        printer();
     }
 
     public static Chromossome mutation(Chromossome ch) throws IOException {
@@ -94,11 +86,21 @@ public class Genetic {
 
     public static void mapsCities(Chromossome chromossome) {
         for (int i = 0; i < cities.length; i++) {
-            // if (chromossome.chromossome[i] == cities[i].id) {
             System.out.print(cities[chromossome.chromossome[i]].city);
-            System.out.print(" -> ");
-            // }
+            if (i != cities.length - 1)
+                System.out.print(" -> ");
         }
+    }
+
+    public static void printer() {
+        System.out.println(" ");
+        System.out.println("Melhor caminho encontrado para o tamanho " + tam + ": ");
+        mapsCities(better);
+        System.out.println(" ");
+        System.out.println(" ");
+        System.out.println("A distância de ida e volta:");
+        System.out.println(better.distance);
+        System.out.println(" ");
     }
 
 }
