@@ -1,13 +1,12 @@
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Random;
 
 public class Genetic {
-
+                                                                                //De nada :)
     private static Chromossome[] population; // list crhomossomes
     private static City[] cities; // list cities
     private static Chromossome better;
-    private static Random rnd;
+    private static final Random random = new Random();
 
     public Genetic(City[] city, Chromossome[] population) throws IOException {
         // this.population = new Chromossome[0];
@@ -20,67 +19,37 @@ public class Genetic {
         evolue();
     }
 
-    // cria a populacao
-    // public void population() throws IOException {
-    // population = new Chromossome[cities.length];
-    // better = new Chromossome(null, 999999999999.99999999999);
-
     public static void evolue() throws IOException {
         Chromossome ch = chromossome();
         better = ch;
         while (true) {
-            Chromossome ch1 = mutation(better);
-            // better = lessDistance(ch1) ? ch1 : better;
-
-            // System.out.println(better.distance);
-            System.out.println("ch1? " + ch1.distance);
-            System.out.println("better: " + better.distance);          
+            ch = mutation(better);
+            better = lessDistance(ch) ? ch : better;
+            System.out.println(better.distance);
         }
     }
 
     public static Chromossome mutation(Chromossome ch) throws IOException {
-        int i1 = (int) (Math.random() * ch.chromossome.length);
-        int i2 = (int) (Math.random() * ch.chromossome.length);
-
-        ch.crossover(i1, i2);
-        calcChromossome(ch);
-        return ch;
-    }
-
-    public static Chromossome cross(Chromossome ch) {
-        int i = (int) (Math.random() * ch.chromossome.length);
-        int index = 0, prev = 0;
-
-        index = eletismSmallest(ch);
-        while (true) {
-            i--;
-            if (index == prev)
-                index = 1 + (int) (Math.random() * ch.chromossome.length - 2);
-            for (int j = 0; j < ch.chromossome.length / 3; j++)
-                ch.chromossome[rnd.nextInt(ch.chromossome.length - 2)] = getRandom();
-            prev = index;
-            return ch;
+        int[] chromossomeCities = new int[ch.getChromossome().length];
+ 
+        for(int i = 0; i <ch.getChromossome().length; i++){
+            chromossomeCities[i] = ch.getChromossome()[i];
         }
 
-    }
+        Chromossome verifyMutation = new Chromossome(chromossomeCities, 0);
 
-    private static int getRandom() {
-        return -1 + (2) * rnd.nextInt();
-    }
+        int i1 = random.nextInt(ch.getChromossome().length);
+        int i2 = random.nextInt(ch.getChromossome().length);
 
-    public static int eletismSmallest(Chromossome ch) {
-        int score = ch.chromossome.length - 1;
-        double smallest = ch.chromossome[0];
-        int index = 0;
-
-        for (int i = 0; i < ch.chromossome.length; i++) {
-            if (smallest > ch.chromossome[score]) {
-                smallest = ch.chromossome[score];
-                index = i;
-            }
+        if (i1 == i2) {
+            i2 = random.nextInt(ch.getChromossome().length);
         }
 
-        return index;
+        int aux = verifyMutation.getChromossome()[i1];
+        verifyMutation.getChromossome()[i1] = verifyMutation.getChromossome()[i2];
+        verifyMutation.getChromossome()[i2] = aux;
+        calcChromossome(verifyMutation);
+        return verifyMutation;
     }
 
     // cria o cromossomo
@@ -103,10 +72,14 @@ public class Genetic {
 
     // calcula distancia total
     public static void calcChromossome(Chromossome ch) throws IOException {
-        for (int i = 0; i < ch.chromossome.length - 1; i++) {
-            // if (ch.chromossome[i] == cities[i].id) {
-                ch.distance += calcEuclid(cities[i].x, cities[i].y, cities[i + 1].x, cities[i + 1].y);
-            // }
+        for (int i = 0; i < cities.length - 1; i++) {
+            if (i == ch.getChromossome().length - 1) {
+                ch.distance += calcEuclid(cities[ch.getChromossome()[0]].x, cities[ch.getChromossome()[0]].y,
+                        cities[ch.getChromossome()[ch.getChromossome().length - 1]].x, cities[ch.getChromossome()[ch.getChromossome().length - 1]].y);
+            } else {
+                ch.distance += calcEuclid(cities[ch.getChromossome()[i]].x, cities[ch.getChromossome()[i]].y,
+                        cities[ch.getChromossome()[i + 1]].x, cities[ch.getChromossome()[i + 1]].y);
+            }
         }
     }
 
@@ -117,8 +90,10 @@ public class Genetic {
 
     // qual tem a menor distancia?
     public static boolean lessDistance(Chromossome ch) {
-        if (ch.distance < better.distance)
+        if (ch.distance < better.distance){
+            // System.out.println(ch.distance);
             return true;
+        }
         return false;
     }
 
