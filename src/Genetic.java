@@ -2,14 +2,14 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Genetic {
-
-    private static Chromossome[] population; // list crhomossomes
     private static City[] cities; // list cities
     private static Chromossome better;
     private static final Random random = new Random();
+    public static int tam;
 
-    public Genetic(City[] city, Chromossome[] population) throws IOException {
+    public Genetic(City[] city, int tam) throws IOException {
         this.cities = new City[0];
+        this.tam = tam;
     }
 
     public void start() throws IOException {
@@ -21,34 +21,39 @@ public class Genetic {
     public static void evolue() throws IOException {
         Chromossome ch = chromossome();
         better = ch;
-        while (true) {
+        for (int i = 0; i < tam; i++) {
             ch = mutation(better);
             better = lessDistance(ch) ? ch : better;
-            if(better.distance < ch.distance) System.out.println(better.distance);
+            // if(better.distance < ch.distance) System.out.println(better.distance);
         }
+
+        System.out.println(" ");
+        System.out.println("Melhor caminho encontrado para o tamanho " + tam + ": ");
+        mapsCities(better);
+        System.out.println(" ");
+        System.out.println("A distância de ida e volta:");
+        System.out.println(better.distance);
+        System.out.println(" ");
     }
 
     public static Chromossome mutation(Chromossome ch) throws IOException {
-        int[] chromossomeCities = new int[ch.getChromossome().length];
- 
-        for(int i = 0; i <ch.getChromossome().length; i++){
-            chromossomeCities[i] = ch.getChromossome()[i];
+        int[] king = new int[ch.chromossome.length];
+
+        int i1 = random.nextInt(ch.chromossome.length);
+        int i2 = random.nextInt(ch.chromossome.length);
+
+        while (i1 == i2)
+            i2 = random.nextInt(ch.chromossome.length);
+
+        for (int i = 0; i < ch.chromossome.length; i++) {
+            king[i] = ch.chromossome[i];
         }
 
-        Chromossome verifyMutation = new Chromossome(chromossomeCities, 0);
+        Chromossome children = new Chromossome(king, 0);
 
-        int i1 = random.nextInt(ch.getChromossome().length);
-        int i2 = random.nextInt(ch.getChromossome().length);
-
-        if (i1 == i2) {
-            i2 = random.nextInt(ch.getChromossome().length);
-        }
-
-        int aux = verifyMutation.getChromossome()[i1];
-        verifyMutation.getChromossome()[i1] = verifyMutation.getChromossome()[i2];
-        verifyMutation.getChromossome()[i2] = aux;
-        calcChromossome(verifyMutation);
-        return verifyMutation;
+        children.swap(i1, i2);
+        calcChromossome(children);
+        return children;
     }
 
     public static Chromossome chromossome() throws IOException {
@@ -64,12 +69,13 @@ public class Genetic {
 
     public static void calcChromossome(Chromossome ch) throws IOException {
         for (int i = 0; i < cities.length - 1; i++) {
-            if (i == ch.getChromossome().length - 1) {
-                ch.distance += calcEuclid(cities[ch.getChromossome()[0]].x, cities[ch.getChromossome()[0]].y,
-                        cities[ch.getChromossome()[ch.getChromossome().length - 1]].x, cities[ch.getChromossome()[ch.getChromossome().length - 1]].y);
+            if (i == ch.chromossome.length - 1) {
+                ch.distance += calcEuclid(cities[ch.chromossome[0]].x, cities[ch.chromossome[0]].y,
+                        cities[ch.chromossome[ch.chromossome.length - 1]].x,
+                        cities[ch.chromossome[ch.chromossome.length - 1]].y);
             } else {
-                ch.distance += calcEuclid(cities[ch.getChromossome()[i]].x, cities[ch.getChromossome()[i]].y,
-                        cities[ch.getChromossome()[i + 1]].x, cities[ch.getChromossome()[i + 1]].y);
+                ch.distance += calcEuclid(cities[ch.chromossome[i]].x, cities[ch.chromossome[i]].y,
+                        cities[ch.chromossome[i + 1]].x, cities[ch.chromossome[i + 1]].y);
             }
         }
     }
@@ -78,26 +84,21 @@ public class Genetic {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
-    // qual tem a menor distancia?
     public static boolean lessDistance(Chromossome ch) {
-        if (ch.distance < better.distance){
-            // System.out.println(ch.distance);
+        if (ch.distance < better.distance) {
+            System.out.println(ch.distance);
             return true;
         }
         return false;
     }
 
-    // torneio
-    public static int tournament() {
-        Random r = new Random();
-        int line1 = r.nextInt(population.length - 1) + 1;
-        int line2 = r.nextInt(population.length - 1) + 1;
-
-        int retLine = line2;
-        if (population[line1].distance < population[line2].distance)
-            retLine = line1;
-
-        return retLine;
+    public static void mapsCities(Chromossome chromossome) {
+        for (int i = 0; i < cities.length; i++) {
+            // if (chromossome.chromossome[i] == cities[i].id) {
+            System.out.print(cities[chromossome.chromossome[i]].city);
+            System.out.print(" -> ");
+            // }
+        }
     }
 
 }
