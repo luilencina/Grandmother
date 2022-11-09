@@ -2,14 +2,13 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Genetic {
-                                                                                //De nada :)
+
     private static Chromossome[] population; // list crhomossomes
     private static City[] cities; // list cities
     private static Chromossome better;
     private static final Random random = new Random();
 
     public Genetic(City[] city, Chromossome[] population) throws IOException {
-        // this.population = new Chromossome[0];
         this.cities = new City[0];
     }
 
@@ -25,7 +24,7 @@ public class Genetic {
         while (true) {
             ch = mutation(better);
             better = lessDistance(ch) ? ch : better;
-            System.out.println(better.distance);
+            if(better.distance < ch.distance) System.out.println(better.distance);
         }
     }
 
@@ -52,7 +51,6 @@ public class Genetic {
         return verifyMutation;
     }
 
-    // cria o cromossomo
     public static Chromossome chromossome() throws IOException {
         int[] ch = new int[cities.length];
 
@@ -64,13 +62,6 @@ public class Genetic {
         return chromossome;
     }
 
-    // method while true
-    // criar novo cromossomo > ordem das cidades iguais
-    // primeiro cromossomo = mae - filho = igual porem nao
-    // colocar dois valores aleatorios da cidades de lugar
-    // dist < mae : substitui a mae
-
-    // calcula distancia total
     public static void calcChromossome(Chromossome ch) throws IOException {
         for (int i = 0; i < cities.length - 1; i++) {
             if (i == ch.getChromossome().length - 1) {
@@ -83,7 +74,6 @@ public class Genetic {
         }
     }
 
-    // calucla distancia entre x e y
     public static double calcEuclid(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
