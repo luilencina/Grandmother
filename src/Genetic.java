@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Genetic {
@@ -28,9 +29,12 @@ public class Genetic {
         Chromossome ch = chromossome();
         better = ch;
         while (true) {
-            ch = mutation(ch);
-            better = lessDistance(ch) ? ch : better;
-            System.out.println(better.distance);
+            Chromossome ch1 = mutation(better);
+            // better = lessDistance(ch1) ? ch1 : better;
+
+            // System.out.println(better.distance);
+            System.out.println("ch1? " + ch1.distance);
+            System.out.println("better: " + better.distance);          
         }
     }
 
@@ -39,7 +43,7 @@ public class Genetic {
         int i2 = (int) (Math.random() * ch.chromossome.length);
 
         ch.crossover(i1, i2);
-        System.out.println(i2 + " " + i1);
+        calcChromossome(ch);
         return ch;
     }
 
@@ -99,10 +103,10 @@ public class Genetic {
 
     // calcula distancia total
     public static void calcChromossome(Chromossome ch) throws IOException {
-        for (int i = 0; i < cities.length - 1; i++) {
-            if (ch.chromossome[i] == cities[i].id) {
+        for (int i = 0; i < ch.chromossome.length - 1; i++) {
+            // if (ch.chromossome[i] == cities[i].id) {
                 ch.distance += calcEuclid(cities[i].x, cities[i].y, cities[i + 1].x, cities[i + 1].y);
-            }
+            // }
         }
     }
 
